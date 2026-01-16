@@ -1,11 +1,10 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 from typing import List
-import os
 
 class Settings(BaseSettings):
     database_url: str = Field(alias="DATABASE_URL")
-    cors_origins: str = os.getenv("CORS_ORIGINS")
+    cors_origins: str = Field(default="*", alias="CORS_ORIGINS")
     
     model_config = SettingsConfigDict(
         env_file=".env",
