@@ -8,7 +8,16 @@ from app.routers import employees, attendance, dashboard
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    await connect_db()
+    if not settings.database_url:
+        print("⚠️ WARNING: DATABASE_URL is not set in environment variables.")
+    
+    try:
+        await connect_db()
+    except Exception as e:
+        print(f"❌ Failed to connect to database: {e}")
+        # We don't raise here to allow the app to start (e.g. for health checks)
+        # but actual DB calls will fail.
+        
     yield
     # Shutdown
     await disconnect_db()
