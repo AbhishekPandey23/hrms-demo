@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
-from app.database import db
+from app.database import get_prisma_client
+db = get_prisma_client()
 from app.models.schemas import DashboardStats, EmployeeResponse
 from datetime import date, datetime
 from typing import List

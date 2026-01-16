@@ -6,6 +6,7 @@ set -o errexit
 pip install -r requirements.txt
 
 # Generate Prisma client
+# Using -m prisma generate to ensure it's in the python path
 python -m prisma generate
 
 # Fetch Prisma binaries (important for deployment environments)

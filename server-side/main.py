@@ -7,16 +7,30 @@ from app.routers import employees, attendance, dashboard
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
+    # Startup process
+    print("🚀 Starting up...")
+    
+    # 1. Check if Prisma is generated
+    try:
+        from prisma import Prisma
+        print("✅ Prisma client found")
+    except (ImportError, RuntimeError) as e:
+        print(f"⚠️ Prisma client issue: {e}. Attempting to generate...")
+        import subprocess
+        import sys
+        subprocess.run([sys.executable, "-m", "prisma", "generate"])
+        # Fetching binaries just in case
+        subprocess.run([sys.executable, "-m", "prisma", "py", "fetch"])
+    
+    # 2. Check Database URL
     if not settings.database_url:
         print("⚠️ WARNING: DATABASE_URL is not set in environment variables.")
     
+    # 3. Connect to DB
     try:
         await connect_db()
     except Exception as e:
         print(f"❌ Failed to connect to database: {e}")
-        # We don't raise here to allow the app to start (e.g. for health checks)
-        # but actual DB calls will fail.
         
     yield
     # Shutdown
